@@ -1,11 +1,27 @@
 import React from "react";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 
-function App() {
-  return (
-    <div>
-      <div>hello world</div>
-    </div>
-  );
-}
+import Navigation from "routes/navigation/navigation.component";
+
+import { GlobalStyle } from "global.styles";
+
+import Home from "routes/home/home.component";
+import Authentication from "routes/authentication/authentication.component";
+import Shop from "routes/shop/shop.component";
+
+const App = () => {
+	return (
+		<BrowserRouter>
+			<GlobalStyle />
+			<Routes>
+				<Route path="/" element={<Navigation />}>
+					<Route index element={<Home />} />
+					<Route path="auth" element={<Authentication />} />
+					<Route path="shop/*" element={<Shop />} />
+				</Route>
+			</Routes>
+		</BrowserRouter>
+	);
+};
 
 export default App;
