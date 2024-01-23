@@ -3,7 +3,7 @@ import { SignInContainer } from "./sign-in-form.styles";
 import { ChangeEvent, useState } from "react";
 import { ButtonsContainer } from "conponents/form-input/form-input.styles";
 import Button, { BUTTON_TYPE_CLASSES } from "conponents/button/button.component";
-import { createUserDocumentFromAuth, signInWithGooglePopup, signInAuthUserWithEmailAndPassword } from "utils/firebase/firebase.utils";
+import { signInWithGooglePopup, signInAuthUserWithEmailAndPassword } from "utils/firebase/firebase.utils";
 
 const defaultFormFields = {
 	email: "",
@@ -21,16 +21,13 @@ const SignInForm = () => {
 	};
 
 	const signInWithGoogle = async () => {
-		const { user } = await signInWithGooglePopup();
-		const userDocRef = await createUserDocumentFromAuth(user);
-		console.log(userDocRef);
+		await signInWithGooglePopup();
 	};
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		try {
-			const response = await signInAuthUserWithEmailAndPassword(email, password);
-			console.log("response =>", response);
+			await signInAuthUserWithEmailAndPassword(email, password);
 			setFormFields(defaultFormFields);
 		} catch (error: any) {
 			console.log("sign in error: ", error);
