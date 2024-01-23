@@ -3,12 +3,15 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { UserProvider } from "context/user.context";
+import { ProductsProvider } from "context/products.context";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
 	<React.StrictMode>
 		<UserProvider>
-			<App />
+			<ProductsProvider>
+				<App />
+			</ProductsProvider>
 		</UserProvider>
 	</React.StrictMode>
 );
