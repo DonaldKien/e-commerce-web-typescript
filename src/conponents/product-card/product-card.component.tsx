@@ -1,15 +1,10 @@
-import { FC } from "react";
+import { FC, useContext } from "react";
 
 import Button, { BUTTON_TYPE_CLASSES } from "../button/button.component";
 
 import { ProductCartContainer, Footer, Name, Price } from "./product-card.styles";
+import { CartContext, CategoryItem } from "context/cart.context";
 
-type CategoryItem = {
-	id: number;
-	imageUrl: string;
-	name: string;
-	price: number;
-};
 
 type ProductCardProps = {
 	product: CategoryItem;
@@ -17,6 +12,11 @@ type ProductCardProps = {
 
 const ProductCard: FC<ProductCardProps> = ({ product }) => {
 	const { name, price, imageUrl } = product;
+	const { addItemToCart } = useContext(CartContext);
+
+	const addProductToCart = () => {
+		addItemToCart(product);
+	};
 
 	return (
 		<ProductCartContainer>
@@ -25,7 +25,9 @@ const ProductCard: FC<ProductCardProps> = ({ product }) => {
 				<Name>{name}</Name>
 				<Price>{price}</Price>
 			</Footer>
-			<Button buttonType={BUTTON_TYPE_CLASSES.inverted}>Add to card</Button>
+			<Button buttonType={BUTTON_TYPE_CLASSES.inverted} onClick={addProductToCart}>
+				Add to card
+			</Button>
 		</ProductCartContainer>
 	);
 };
