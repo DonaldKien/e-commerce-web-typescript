@@ -1,11 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-
-export type CategoryItem = {
-	id: number;
-	imageUrl: string;
-	name: string;
-	price: number;
-};
+import { CategoryItem } from "context/products.context";
 
 export type TCartItems = CategoryItem & { quantity: number };
 

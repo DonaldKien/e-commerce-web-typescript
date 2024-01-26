@@ -1,17 +1,39 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
+import { getCategoriesAndDocuments } from "utils/firebase/firebase.utils";
 
-import PRODUCTS from "data/show-data.json";
+export type CategoryItem = {
+	id: number;
+	imageUrl: string;
+	name: string;
+	price: number;
+};
 
-interface ProductContextValue {
-	products: { id: number; name: string; imageUrl: string; price: number }[];
-}
+export type CategoriesMapValue =
+	| {
+			[key: string]: CategoryItem[];
+	  }
+	| {};
 
-export const ProductContext = createContext<ProductContextValue>({
-	products: [],
-});
+type CategoryContextValue = {
+	categoriesMap: CategoriesMapValue;
+};
 
-export const ProductsProvider = ({ children }: any) => {
-	const [products, setProducts] = useState(PRODUCTS);
-	const value: ProductContextValue = { products };
-	return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;
+const categoryMapInitialValue = {
+	categoriesMap: {},
+};
+
+export const CategoryContext = createContext<CategoryContextValue>(categoryMapInitialValue);
+
+export const CategoriesProvider = ({ children }: any) => {
+	const [categoriesMap, setCategoriesMap] = useState<CategoriesMapValue>(categoryMapInitialValue?.categoriesMap);
+
+	useEffect(() => {
+		const getCategoriesMap = async () => {
+			const response = await getCategoriesAndDocuments();
+			setCategoriesMap(response);
+		};
+		getCategoriesMap();
+	}, []);
+
+	return <CategoryContext.Provider value={{ categoriesMap }}>{children}</CategoryContext.Provider>;
 };

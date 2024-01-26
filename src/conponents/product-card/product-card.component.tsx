@@ -3,8 +3,8 @@ import { FC, useContext } from "react";
 import Button, { BUTTON_TYPE_CLASSES } from "../button/button.component";
 
 import { ProductCartContainer, Footer, Name, Price } from "./product-card.styles";
-import { CartContext, CategoryItem } from "context/cart.context";
-
+import { CartContext } from "context/cart.context";
+import { CategoryItem } from "context/products.context";
 
 type ProductCardProps = {
 	product: CategoryItem;

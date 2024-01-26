@@ -10,7 +10,7 @@ import {
 	NextOrObserver,
 	User,
 } from "firebase/auth";
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, setDoc, collection, writeBatch, query, getDocs } from "firebase/firestore";
 
 const firebaseConfig = {
 	apiKey: "AIzaSyBkHk8U3j_9vLPYaJL6z1fHapg-0dwyACk",
@@ -22,16 +22,22 @@ const firebaseConfig = {
 	measurementId: "G-QGT2MZW9BR",
 };
 
+type ObjectToAdd = {
+	title: string;
+};
+
 // Initialize Firebase
 initializeApp(firebaseConfig);
 
 const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: "select_account" });
 
-export const auth = getAuth();
-export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider);
-
 export const db = getFirestore();
+export const auth = getAuth();
+
+// AUTHENTICATION
+
+export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider);
 
 export const createUserDocumentFromAuth = async (userAuth: any, additionalInformation?: any) => {
 	const userDocRef = doc(db, "users", userAuth.uid);
@@ -72,3 +78,38 @@ export const signOutAuthUser = async () => {
 };
 
 export const onAuthStateChangedListener = (callback: NextOrObserver<User>) => onAuthStateChanged(auth, callback);
+
+// DATABASE
+
+export const addCollectionAndDocuments = async <T extends ObjectToAdd>(collectionKey: string, objectsToAdd: T[]): Promise<void> => {
+	const collectionRef = collection(db, collectionKey);
+	const batch = writeBatch(db);
+
+	objectsToAdd.forEach((object) => {
+		const docRef = doc(collectionRef, object.title.toLowerCase());
+		batch.set(docRef, object);
+	});
+
+	await batch.commit();
+};
+
+type CategoryMap = {
+	[key: string]: {
+		title: string;
+		items: any[];
+	}[];
+};
+
+export const getCategoriesAndDocuments = async () => {
+	const collectionRef = collection(db, "categories");
+	const q = query(collectionRef);
+
+	const querySnapshot = await getDocs(q);
+	const categoryMap: CategoryMap = querySnapshot.docs.reduce((acc: CategoryMap, docSnapshot) => {
+		const { title, items } = docSnapshot.data();
+		const titleKey: string = title.toLowerCase();
+		acc[`${titleKey}`] = items;
+		return acc;
+	}, {});
+	return categoryMap;
+};
