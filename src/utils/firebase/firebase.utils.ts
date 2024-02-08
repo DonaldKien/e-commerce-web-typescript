@@ -93,23 +93,10 @@ export const addCollectionAndDocuments = async <T extends ObjectToAdd>(collectio
 	await batch.commit();
 };
 
-type CategoryMap = {
-	[key: string]: {
-		title: string;
-		items: any[];
-	}[];
-};
-
 export const getCategoriesAndDocuments = async () => {
 	const collectionRef = collection(db, "categories");
 	const q = query(collectionRef);
 
 	const querySnapshot = await getDocs(q);
-	const categoryMap: CategoryMap = querySnapshot.docs.reduce((acc: CategoryMap, docSnapshot) => {
-		const { title, items } = docSnapshot.data();
-		const titleKey: string = title.toLowerCase();
-		acc[`${titleKey}`] = items;
-		return acc;
-	}, {});
-	return categoryMap;
+	return querySnapshot.docs.map((docSnapshot) => docSnapshot.data());
 };

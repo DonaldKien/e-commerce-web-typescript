@@ -2,20 +2,15 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { UserProvider } from "context/user.context";
-import { CategoriesProvider } from "context/products.context";
-import { CartProvider } from "context/cart.context";
+import { Provider } from "react-redux";
+import { store } from "store/store";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
 	<React.StrictMode>
-		<UserProvider>
-			<CategoriesProvider>
-				<CartProvider>
-					<App />
-				</CartProvider>
-			</CategoriesProvider>
-		</UserProvider>
+		<Provider store={store}>
+			<App />
+		</Provider>
 	</React.StrictMode>
 );
 

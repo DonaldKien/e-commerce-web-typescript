@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { CartItemContainer, ItemDetails } from "./cart-item.styles";
-import { TCartItems } from "context/cart.context";
+import { TCartItems } from "interfaces/cart";
 
 type CartItemProps = {
 	cartItem: TCartItems;
