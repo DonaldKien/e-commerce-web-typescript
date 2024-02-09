@@ -7,11 +7,15 @@ const selectCategoryReducer = (state: IRootState) => {
 };
 
 export const selectCategoriesMap = createSelector([selectCategoryReducer], (categoriesSlice) => {
-	const categories = categoriesSlice.categories;
+	const categories: Category[] = categoriesSlice.categories;
 	return categories.reduce((acc: CategoriesMapValue, category: Category) => {
 		const { title, items } = category;
 		const titleKey = title.toLowerCase() as keyof CategoriesMapValue;
 		acc[`${titleKey}`] = items as CategoryItem[];
 		return acc;
 	}, {} as CategoriesMapValue);
+});
+
+export const selectCategoriesIsLoading = createSelector([selectCategoryReducer], (categoriesSlice) => {
+	return categoriesSlice.isLoading;
 });
