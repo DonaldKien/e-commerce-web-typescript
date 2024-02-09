@@ -4,7 +4,8 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import loggerMiddleware from "middleware/redux-logger";
 import { composeWithDevTools } from "@redux-devtools/extension";
-import { thunk } from "redux-thunk";
+import createSagaMiddleware from "redux-saga";
+import { rootSaga } from "./root-saga";
 
 const persistConfig = {
 	key: "root",
@@ -12,9 +13,11 @@ const persistConfig = {
 	blacklist: ["user"],
 };
 
+const sagaMiddleware = createSagaMiddleware();
+
 const persistedReducer = persistReducer<any, any>(persistConfig, rootReducer);
 
-const prodMiddlewares: any[] = [thunk];
+const prodMiddlewares: any[] = [sagaMiddleware];
 const devMiddlewares: any[] = [loggerMiddleware];
 
 const composedEnhancer = () => {
@@ -26,5 +29,7 @@ const composedEnhancer = () => {
 };
 
 export const store = createStore(persistedReducer, undefined, composedEnhancer());
+
+sagaMiddleware.run(rootSaga);
 
 export const persistor = persistStore(store);
