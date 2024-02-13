@@ -17,7 +17,7 @@ const fetchCategoriesFailed = (error: any) => ({
 	payload: error,
 });
 
-export const fetchCategoriesAsync = async (dispatch: Dispatch<UnknownAction>) => {
+export const fetchCategoriesAsync = () => async (dispatch: Dispatch<UnknownAction>) => {
 	dispatch(fetchCategoriesStart());
 	try {
 		const response = (await getCategoriesAndDocuments()) as CategoriesDocumentData;
