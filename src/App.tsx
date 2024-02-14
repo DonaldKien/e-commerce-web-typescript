@@ -8,10 +8,7 @@ import Authentication from "routes/authentication/authentication.component";
 import Shop from "routes/shop/shop.component";
 import Checkout from "routes/checkout/checkout.component";
 
-import { createUserDocumentFromAuth, onAuthStateChangedListener } from "utils/firebase/firebase.utils";
-import { AuthUserValue } from "interfaces/authentication";
-
-import { setCurrentUser } from "store/user/user.action";
+import { checkUserSession } from "store/user/user.action";
 
 import { GlobalStyle } from "global.styles";
 
@@ -19,13 +16,7 @@ const App = () => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		const unsubscribe = onAuthStateChangedListener((user: AuthUserValue) => {
-			if (user) {
-				createUserDocumentFromAuth(user);
-			}
-			dispatch(setCurrentUser(user));
-		});
-		return unsubscribe;
+		dispatch(checkUserSession());
 	}, [dispatch]);
 
 	return (

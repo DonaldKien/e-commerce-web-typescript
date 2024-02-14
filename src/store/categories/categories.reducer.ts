@@ -1,9 +1,11 @@
 import { Categories } from "interfaces/categories";
 import { CATEGORIES_ACTION_TYPES } from "./categories.types";
 
+type CategoriesError = any;
+
 type CategoriesReducerAction = {
 	type: CATEGORIES_ACTION_TYPES;
-	payload: Categories;
+	payload: Categories | CategoriesError;
 };
 
 const CATEGORIES_INITIAL_STATE = {
