@@ -6,10 +6,10 @@ import Category from "routes/category/category.component";
 import { fetchCategoriesAsync } from "store/categories/categories.action";
 
 const Shop = () => {
-	const dispatch = useDispatch();
+	const dispatch: (dispatch: any) => Promise<void> = useDispatch();
 
 	useEffect(() => {
-		dispatch(fetchCategoriesAsync());
+		dispatch(fetchCategoriesAsync()); // Cast the action to AnyAction
 	}, [dispatch]);
 
 	return (
