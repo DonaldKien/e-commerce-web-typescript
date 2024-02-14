@@ -1,5 +1,5 @@
+import { createSlice } from "@reduxjs/toolkit";
 import { CartItem, TCartItems } from "interfaces/cart";
-import { CART_ACTION_TYPES } from "./cart.types";
 
 const totalQuantityAndAmountCalc = (cartItems: TCartItems[]) => {
 	const calculatedTotal = cartItems.reduce(
@@ -63,24 +63,43 @@ const removeCartProduct = (cartItems: TCartItems[], productToRemove: CartItem) =
 	};
 };
 
-export const setIsCartOpen = (isCartOpen: boolean) => {
-	return {
-		type: CART_ACTION_TYPES.SET_IS_CART_OPEN,
-		payload: isCartOpen,
-	};
+type CartReducerValue = {
+	cartItems: TCartItems[];
+	totalQuantity: number;
+	totalAmount: number;
+	isCartOpen: boolean;
 };
 
-export const addItemToCart = (cartItems: TCartItems[], itemToAdd: CartItem) => ({
-	type: CART_ACTION_TYPES.SET_CART_ITEMS,
-	payload: addCartItem(cartItems, itemToAdd),
+const CART_INITIAL_VALUE: CartReducerValue = {
+	cartItems: [],
+	totalQuantity: 0,
+	totalAmount: 0,
+	isCartOpen: false,
+};
+
+export const cartSlice = createSlice({
+	name: "cart",
+	initialState: CART_INITIAL_VALUE,
+	reducers: {
+		addItemToCart: (state, action) => ({
+			...state,
+			...addCartItem(state.cartItems, action.payload),
+		}),
+		removeItemFromCart: (state, action) => ({
+			...state,
+			...removeCartItem(state.cartItems, action.payload),
+		}),
+		removeProductFromCart: (state, action) => ({
+			...state,
+			...removeCartProduct(state.cartItems, action.payload),
+		}),
+		setIsCartOpen: (state) => ({
+			...state,
+			isCartOpen: !state.isCartOpen,
+		}),
+	},
 });
 
-export const removeItemFromCart = (cartItems: TCartItems[], itemToRemove: CartItem) => ({
-	type: CART_ACTION_TYPES.SET_CART_ITEMS,
-	payload: removeCartItem(cartItems, itemToRemove),
-});
+export const { addItemToCart, removeItemFromCart, removeProductFromCart, setIsCartOpen } = cartSlice.actions;
 
-export const removeProductFromCart = (cartItems: TCartItems[], productToRemove: CartItem) => ({
-	type: CART_ACTION_TYPES.SET_CART_ITEMS,
-	payload: removeCartProduct(cartItems, productToRemove),
-});
+export const cartReducer = cartSlice.reducer;
