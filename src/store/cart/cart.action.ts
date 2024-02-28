@@ -1,5 +1,5 @@
-import { CartItem, TCartItems } from "interfaces/cart";
-import { CART_ACTION_TYPES, CartItemsWithQuantityAndAmount, TotalCartQuantityAndAmount } from "./cart.types";
+import { CartItem, CartItemsWithQuantityAndAmount, TCartItems, TotalCartQuantityAndAmount } from "interfaces/cart";
+import { CART_ACTION_TYPES } from "./cart.types";
 import { ActionWithPayload, createAction, withMatcher } from "utils/reducer/reducer.utils";
 
 const totalQuantityAndAmountCalc = (cartItems: TCartItems[]): TotalCartQuantityAndAmount => {
