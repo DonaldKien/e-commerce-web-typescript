@@ -7,16 +7,10 @@ export type CategoryItem = {
 
 export type Category = {
 	title: string;
+	imageUrl: string;
 	items: CategoryItem[];
 };
 
-export type Categories = Category[];
-
-export type CategoriesMapValue = {
+export type CategoryMap = {
 	[key: string]: CategoryItem[];
 };
-
-export type CategoriesDocumentData = {
-	title: string;
-	items: CategoryItem[];
-}[];

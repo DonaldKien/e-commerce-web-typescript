@@ -5,7 +5,7 @@ import cartReducer from "./cart/cart.reducer";
 
 export const rootReducer = combineReducers({
 	user: userReducer,
-	categoriesMap: categoriesReducer,
+	categories: categoriesReducer,
 	cartReducer: cartReducer
 });
 

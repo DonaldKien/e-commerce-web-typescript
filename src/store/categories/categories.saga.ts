@@ -1,10 +1,9 @@
 import { getCategoriesAndDocuments } from "utils/firebase/firebase.utils";
-import { CategoriesDocumentData } from "interfaces/categories";
 import { takeLatest, all, call, put } from "redux-saga/effects";
 import { fetchCategoriesFailed, fetchCategoriesSuccess } from "./categories.action";
 import { CATEGORIES_ACTION_TYPES } from "./categories.types";
 
-export function* fetchCategoriesAsync(): Generator<any, void, CategoriesDocumentData> {
+export function* fetchCategoriesAsync(): Generator<any, void, any> {
 	try {
 		const categoriesArray = yield call(getCategoriesAndDocuments);
 		yield put(fetchCategoriesSuccess(categoriesArray));

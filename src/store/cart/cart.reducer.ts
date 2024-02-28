@@ -1,41 +1,28 @@
-import { TCartItems } from "interfaces/cart";
-import { CART_ACTION_TYPES } from "./cart.types";
+import { AnyAction } from "redux";
+import { setCartItems, setIsCartOpen } from "./cart.action";
+import { CartItemsWithQuantityAndAmount } from "./cart.types";
 
-type CartReducerAction = {
-	type: CART_ACTION_TYPES;
-	payload: CartReducerValue;
-};
-
-type CartReducerValue = {
-	cartItems: TCartItems[];
-	totalQuantity: number;
-	totalAmount: number;
+export type CartState = CartItemsWithQuantityAndAmount & {
 	isCartOpen: boolean;
 };
 
-const CART_INITIAL_VALUE: CartReducerValue = {
+const CART_INITIAL_VALUE: CartState = {
 	cartItems: [],
 	totalQuantity: 0,
 	totalAmount: 0,
 	isCartOpen: false,
 };
 
-const cartReducer = (state = CART_INITIAL_VALUE, action: CartReducerAction) => {
-	const { type, payload } = action;
-	switch (type) {
-		case CART_ACTION_TYPES.SET_CART_ITEMS:
-			return {
-				...state,
-				...payload,
-			};
-		case CART_ACTION_TYPES.SET_IS_CART_OPEN:
-			return {
-				...state,
-				isCartOpen: payload,
-			};
-		default:
-			return state;
+const cartReducer = (state = CART_INITIAL_VALUE, action: AnyAction): CartState => {
+	if (setIsCartOpen.match(action)) {
+		return { ...state, isCartOpen: action.payload };
 	}
+
+	if (setCartItems.match(action)) {
+		return { ...state, ...action.payload };
+	}
+
+	return state;
 };
 
 export default cartReducer;

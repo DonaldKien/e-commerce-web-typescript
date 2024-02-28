@@ -1,7 +1,8 @@
 import { CartItem, TCartItems } from "interfaces/cart";
-import { CART_ACTION_TYPES } from "./cart.types";
+import { CART_ACTION_TYPES, CartItemsWithQuantityAndAmount, TotalCartQuantityAndAmount } from "./cart.types";
+import { ActionWithPayload, createAction, withMatcher } from "utils/reducer/reducer.utils";
 
-const totalQuantityAndAmountCalc = (cartItems: TCartItems[]) => {
+const totalQuantityAndAmountCalc = (cartItems: TCartItems[]): TotalCartQuantityAndAmount => {
 	const calculatedTotal = cartItems.reduce(
 		(total, cartItem) => {
 			return {
@@ -17,7 +18,7 @@ const totalQuantityAndAmountCalc = (cartItems: TCartItems[]) => {
 	return calculatedTotal;
 };
 
-const addCartItem = (cartItems: TCartItems[], itemToAdd: CartItem) => {
+const addCartItem = (cartItems: TCartItems[], itemToAdd: CartItem): CartItemsWithQuantityAndAmount => {
 	const existingCartItem = cartItems.find((cartItem) => cartItem.id === itemToAdd.id);
 	let newCartItems: TCartItems[] = [];
 	if (existingCartItem) {
@@ -31,7 +32,7 @@ const addCartItem = (cartItems: TCartItems[], itemToAdd: CartItem) => {
 	};
 };
 
-const removeCartItem = (cartItems: TCartItems[], itemToRemove: CartItem) => {
+const removeCartItem = (cartItems: TCartItems[], itemToRemove: CartItem): CartItemsWithQuantityAndAmount => {
 	const existingCartItem = cartItems.find((cartItem) => cartItem.id === itemToRemove.id);
 	let newCartItems: TCartItems[] = [];
 	if (existingCartItem) {
@@ -49,7 +50,7 @@ const removeCartItem = (cartItems: TCartItems[], itemToRemove: CartItem) => {
 	};
 };
 
-const removeCartProduct = (cartItems: TCartItems[], productToRemove: CartItem) => {
+const removeCartProduct = (cartItems: TCartItems[], productToRemove: CartItem): CartItemsWithQuantityAndAmount => {
 	const existingCartItem = cartItems.find((cartItem) => cartItem.id === productToRemove.id);
 	let newCartItems: TCartItems[] = [];
 	if (existingCartItem) {
@@ -63,24 +64,25 @@ const removeCartProduct = (cartItems: TCartItems[], productToRemove: CartItem) =
 	};
 };
 
-export const setIsCartOpen = (isCartOpen: boolean) => {
-	return {
-		type: CART_ACTION_TYPES.SET_IS_CART_OPEN,
-		payload: isCartOpen,
-	};
+type SetIsCartOpen = ActionWithPayload<CART_ACTION_TYPES.SET_IS_CART_OPEN, boolean>;
+
+type SetCartItemsAction = ActionWithPayload<CART_ACTION_TYPES.SET_CART_ITEMS, CartItemsWithQuantityAndAmount>;
+
+export const setIsCartOpen = withMatcher((isCartOpen: boolean): SetIsCartOpen => createAction(CART_ACTION_TYPES.SET_IS_CART_OPEN, isCartOpen));
+
+export const setCartItems = withMatcher((newCartItems: CartItemsWithQuantityAndAmount): SetCartItemsAction => createAction(CART_ACTION_TYPES.SET_CART_ITEMS, newCartItems));
+
+export const addItemToCart = (cartItems: TCartItems[], itemToAdd: CartItem) => {
+	const newCartItems = addCartItem(cartItems, itemToAdd);
+	return setCartItems(newCartItems);
 };
 
-export const addItemToCart = (cartItems: TCartItems[], itemToAdd: CartItem) => ({
-	type: CART_ACTION_TYPES.SET_CART_ITEMS,
-	payload: addCartItem(cartItems, itemToAdd),
-});
+export const removeItemFromCart = (cartItems: TCartItems[], itemToRemove: CartItem) => {
+	const newCartItems = removeCartItem(cartItems, itemToRemove);
+	return setCartItems(newCartItems);
+};
 
-export const removeItemFromCart = (cartItems: TCartItems[], itemToRemove: CartItem) => ({
-	type: CART_ACTION_TYPES.SET_CART_ITEMS,
-	payload: removeCartItem(cartItems, itemToRemove),
-});
-
-export const removeProductFromCart = (cartItems: TCartItems[], productToRemove: CartItem) => ({
-	type: CART_ACTION_TYPES.SET_CART_ITEMS,
-	payload: removeCartProduct(cartItems, productToRemove),
-});
+export const removeProductFromCart = (cartItems: TCartItems[], productToRemove: CartItem) => {
+	const newCartItems = removeCartProduct(cartItems, productToRemove);
+	return setCartItems(newCartItems);
+};
