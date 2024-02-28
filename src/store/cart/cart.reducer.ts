@@ -1,9 +1,8 @@
 import { AnyAction } from "redux";
 import { setCartItems, setIsCartOpen } from "./cart.action";
 import { CartItemsWithQuantityAndAmount } from "interfaces/cart";
-import { ReadonlyIntersection } from "interfaces/utils";
 
-export type CartState = ReadonlyIntersection<CartItemsWithQuantityAndAmount, { isCartOpen: boolean }>;
+export type CartState = Readonly<CartItemsWithQuantityAndAmount & { isCartOpen: boolean }>;
 
 const CART_INITIAL_VALUE: CartState = {
 	cartItems: [],
