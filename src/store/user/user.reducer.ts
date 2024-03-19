@@ -1,63 +1,74 @@
-import { USER_ACTION_TYPES } from "./user.types";
+import { AnyAction } from "redux";
 import { AuthUserValue } from "interfaces/authentication";
+import {
+	emailSignInStart,
+	googleSignInStart,
+	signInFailed,
+	signInSuccess,
+	signOutFailed,
+	signOutStart,
+	signOutSuccess,
+	signUpFailed,
+	signUpStart,
+} from "./user.action";
 
-type UserReducerState = {
-	currentUser: AuthUserValue;
+export type UserState = {
+	readonly currentUser: AuthUserValue | null;
+	readonly isLoading: boolean;
+	readonly error: Error | null;
 };
 
-type UserError = any;
-
-type UserReducerAction = {
-	type: USER_ACTION_TYPES;
-	payload: AuthUserValue | UserError;
-};
-
-const USER_INITIAL_STATE = {
+const USER_INITIAL_STATE: UserState = {
 	currentUser: null,
 	isLoading: false,
 	error: null,
 };
 
-const userReducer = (state: UserReducerState = USER_INITIAL_STATE, action: UserReducerAction) => {
-	const { type, payload } = action;
-
-	switch (type) {
-		case USER_ACTION_TYPES.SIGN_UP_START:
-		case USER_ACTION_TYPES.GOOGLE_SIGN_IN_START:
-		case USER_ACTION_TYPES.EMAIL_SIGN_IN_START:
-			return {
-				...state,
-				currentUser: null,
-				isLoading: true,
-			};
-		case USER_ACTION_TYPES.SIGN_IN_SUCCESS:
-			return {
-				...state,
-				isLoading: false,
-				currentUser: payload,
-			};
-		case USER_ACTION_TYPES.SIGN_OUT_START:
-			return {
-				...state,
-				isLoading: true,
-			};
-		case USER_ACTION_TYPES.SIGN_OUT_SUCCESS:
-			return {
-				...state,
-				isLoading: false,
-				currentUser: null,
-			};
-		case USER_ACTION_TYPES.SIGN_IN_FAILED:
-		case USER_ACTION_TYPES.SIGN_UP_FAILED:
-		case USER_ACTION_TYPES.SIGN_OUT_FAILED:
-			return {
-				...state,
-				isLoading: false,
-				error: payload,
-			};
-		default:
-			return state;
+const userReducer = (state = USER_INITIAL_STATE, action: AnyAction): UserState => {
+	if (
+		signUpStart.match(action) ||
+		googleSignInStart.match(action) ||
+		emailSignInStart.match(action)
+	) {
+		return {
+			...state,
+			currentUser: null,
+			isLoading: true,
+		};
 	}
+
+	if (signInSuccess.match(action)) {
+		return {
+			...state,
+			currentUser: null,
+			isLoading: true,
+		};
+	}
+
+	if (signOutStart.match(action)) {
+		return {
+			...state,
+			isLoading: true,
+		};
+	}
+
+	if (signOutSuccess.match(action)) {
+		return {
+			...state,
+			isLoading: false,
+			currentUser: null,
+		};
+	}
+
+	if (signInFailed.match(action) || signUpFailed.match(action) || signOutFailed.match(action)) {
+		return {
+			...state,
+			isLoading: false,
+			error: action.payload,
+		};
+	}
+
+	return state;
 };
 
 export default userReducer;

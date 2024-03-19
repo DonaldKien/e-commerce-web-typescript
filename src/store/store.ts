@@ -1,13 +1,17 @@
 import { compose, createStore, applyMiddleware } from "redux";
-import { rootReducer } from "./root-reducer";
-import { persistStore, persistReducer } from "redux-persist";
+import { IRootState, rootReducer } from "./root-reducer";
+import { persistStore, persistReducer, PersistConfig } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import loggerMiddleware from "middleware/redux-logger";
 import { composeWithDevTools } from "@redux-devtools/extension";
 import createSagaMiddleware from "redux-saga";
 import { rootSaga } from "./root-saga";
 
-const persistConfig = {
+type ExtendedPersistConfig = PersistConfig<IRootState> & {
+	blacklist: (keyof IRootState)[];
+};
+
+const persistConfig: ExtendedPersistConfig = {
 	key: "root",
 	storage,
 	blacklist: ["user"],
