@@ -5,7 +5,10 @@ import ProductCard from "conponents/product-card/product-card.component";
 import { CategoryContainer, Title } from "./category.styles";
 import { useSelector } from "react-redux";
 import { CategoryItem } from "interfaces/categories";
-import { selectCategoriesIsLoading, selectCategoriesMap } from "store/categories/categories.selector";
+import {
+	selectCategoriesIsLoading,
+	selectCategoriesMap,
+} from "store/categories/categories.selector";
 import Spinner from "conponents/spinner/spinner.component";
 
 type CategoryRouteParams = {
@@ -30,7 +33,10 @@ const Category = () => {
 				<Spinner />
 			) : (
 				<CategoryContainer>
-					{products?.length && products.map((product) => <ProductCard key={product.id} product={product} />)}
+					{products?.length &&
+						products.map((product) => (
+							<ProductCard key={product.id} product={product} />
+						))}
 				</CategoryContainer>
 			)}
 		</Fragment>
