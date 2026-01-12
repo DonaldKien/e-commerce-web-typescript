@@ -25,13 +25,13 @@ export type CartContextType = {
 
 export const CartContext = createContext<CartContextType>({
 	isCartOpen: false,
-	setIsCartOpen: () => {},
+	setIsCartOpen: () => { },
 	cartItems: [],
-	addItemToCart: () => {},
-	removeItemFromCart: () => {},
+	addItemToCart: () => { },
+	removeItemFromCart: () => { },
 	totalQuantity: 0,
 	totalAmount: 0,
-	removeProductFromCart: () => {},
+	removeProductFromCart: () => { },
 });
 
 const totalQuantityAndAmountCalc = (cartItems: TCartItems[]) => {
@@ -50,64 +50,73 @@ const totalQuantityAndAmountCalc = (cartItems: TCartItems[]) => {
 	return calculatedTotal;
 };
 
-const addCartItem = (cartItems: TCartItems[], itemToAdd: CategoryItem) => {
-	const existingCartItem = cartItems.find((cartItem) => cartItem.id === itemToAdd.id);
-	let newCartItems: TCartItems[] = [];
-	if (existingCartItem) {
-		newCartItems = cartItems.map((cartItem) => (cartItem.id === itemToAdd.id ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem));
-	} else {
-		newCartItems = [...cartItems, { ...itemToAdd, quantity: 1 }];
-	}
-	return {
-		cartItems: newCartItems,
-		...totalQuantityAndAmountCalc(newCartItems),
-	};
-};
-
-const removeCartItem = (cartItems: TCartItems[], itemToRemove: CategoryItem) => {
-	const existingCartItem = cartItems.find((cartItem) => cartItem.id === itemToRemove.id);
-	let newCartItems: TCartItems[] = [];
-	if (existingCartItem) {
-		if (existingCartItem.quantity === 1) {
-			newCartItems = cartItems.filter((cartItem) => cartItem.id !== itemToRemove.id);
-		} else {
-			newCartItems = cartItems.map((cartItem) =>
-				cartItem.id === itemToRemove.id ? { ...cartItem, quantity: cartItem.quantity - 1 } : cartItem
-			);
-		}
-	}
-	return {
-		cartItems: newCartItems,
-		...totalQuantityAndAmountCalc(newCartItems),
-	};
-};
-
-const removeCartProduct = (cartItems: TCartItems[], productToRemove: CategoryItem) => {
-	const existingCartItem = cartItems.find((cartItem) => cartItem.id === productToRemove.id);
-	let newCartItems: TCartItems[] = [];
-	if (existingCartItem) {
-		newCartItems = cartItems.filter((cartItem) => cartItem.id !== productToRemove.id);
-	} else {
-		newCartItems = cartItems;
-	}
-	return {
-		cartItems: newCartItems,
-		...totalQuantityAndAmountCalc(newCartItems),
-	};
-};
-
 enum CART_ACTION_TYPES {
-	SET_CART_ITEMS = "SET_CART_ITEMS",
+	ADD_CART_ITEM = "ADD_CART_ITEM",
+	REMOVE_CART_ITEM = "REMOVE_CART_ITEM",
+	REMOVE_CART_PRODUCT = "REMOVE_CART_PRODUCT",
 }
 
-const cartReducer = (state: typeof INITIAL_VALUE, action: { type: keyof typeof CART_ACTION_TYPES; payload: CartContextTypeValue }) => {
+const cartReducer = (state: typeof INITIAL_VALUE, action: { type: keyof typeof CART_ACTION_TYPES; payload: CategoryItem }) => {
 	const { type, payload } = action;
 
 	switch (type) {
-		case CART_ACTION_TYPES.SET_CART_ITEMS:
+		case CART_ACTION_TYPES.ADD_CART_ITEM:
+			const addCartItem = (cartItems: TCartItems[], itemToAdd: CategoryItem) => {
+				const existingCartItem = cartItems.find((cartItem) => cartItem.id === itemToAdd.id);
+				let newCartItems: TCartItems[] = [];
+				if (existingCartItem) {
+					newCartItems = cartItems.map((cartItem) => (cartItem.id === itemToAdd.id ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem));
+				} else {
+					newCartItems = [...cartItems, { ...itemToAdd, quantity: 1 }];
+				}
+				return {
+					cartItems: newCartItems,
+					...totalQuantityAndAmountCalc(newCartItems),
+				};
+			};
 			return {
 				...state,
-				...payload,
+				...addCartItem(state.cartItems, payload),
+			};
+		case CART_ACTION_TYPES.REMOVE_CART_ITEM:
+			const removeCartItem = (cartItems: TCartItems[], itemToRemove: CategoryItem) => {
+				const existingCartItem = cartItems.find((cartItem) => cartItem.id === itemToRemove.id);
+				let newCartItems: TCartItems[] = [];
+				if (existingCartItem) {
+					if (existingCartItem.quantity === 1) {
+						newCartItems = cartItems.filter((cartItem) => cartItem.id !== itemToRemove.id);
+					} else {
+						newCartItems = cartItems.map((cartItem) =>
+							cartItem.id === itemToRemove.id ? { ...cartItem, quantity: cartItem.quantity - 1 } : cartItem
+						);
+					}
+				}
+				return {
+					cartItems: newCartItems,
+					...totalQuantityAndAmountCalc(newCartItems),
+				};
+			};
+			return {
+				...state,
+				...removeCartItem(state.cartItems, payload),
+			};
+		case CART_ACTION_TYPES.REMOVE_CART_PRODUCT:
+			const removeCartProduct = (cartItems: TCartItems[], productToRemove: CategoryItem) => {
+				const existingCartItem = cartItems.find((cartItem) => cartItem.id === productToRemove.id);
+				let newCartItems: TCartItems[] = [];
+				if (existingCartItem) {
+					newCartItems = cartItems.filter((cartItem) => cartItem.id !== productToRemove.id);
+				} else {
+					newCartItems = cartItems;
+				}
+				return {
+					cartItems: newCartItems,
+					...totalQuantityAndAmountCalc(newCartItems),
+				};
+			};
+			return {
+				...state,
+				...removeCartProduct(state.cartItems, payload),
 			};
 		default:
 			throw new Error(`Unhandled type ${type} in cartReducer`);
@@ -120,22 +129,22 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const addItemToCart = (itemToAdd: CategoryItem) => {
 		dispatch({
-			type: CART_ACTION_TYPES.SET_CART_ITEMS,
-			payload: addCartItem(cartItems, itemToAdd),
+			type: CART_ACTION_TYPES.ADD_CART_ITEM,
+			payload: itemToAdd,
 		});
 	};
 
 	const removeItemFromCart = (itemToRemove: CategoryItem) => {
 		dispatch({
-			type: CART_ACTION_TYPES.SET_CART_ITEMS,
-			payload: removeCartItem(cartItems, itemToRemove),
+			type: CART_ACTION_TYPES.REMOVE_CART_ITEM,
+			payload: itemToRemove,
 		});
 	};
 
 	const removeProductFromCart = (productToRemove: CategoryItem) => {
 		dispatch({
-			type: CART_ACTION_TYPES.SET_CART_ITEMS,
-			payload: removeCartProduct(cartItems, productToRemove),
+			type: CART_ACTION_TYPES.REMOVE_CART_PRODUCT,
+			payload: productToRemove,
 		});
 	};
 
