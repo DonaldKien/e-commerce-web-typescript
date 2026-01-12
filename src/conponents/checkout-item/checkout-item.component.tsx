@@ -11,18 +11,17 @@ type CheckoutItemProps = {
 
 const CheckoutItem: FC<CheckoutItemProps> = ({ cartItem }) => {
 	const { name, imageUrl, price, quantity } = cartItem;
-	const cartItems = useSelector(selectCartItems);
 	const dispatch = useDispatch();
 
 	const addItemHandler = () => {
-		dispatch(addItemToCart(cartItems, cartItem));
+		dispatch(addItemToCart(cartItem));
 	};
 	const removeItemHandler = () => {
-		dispatch(removeItemFromCart(cartItems, cartItem));
+		dispatch(removeItemFromCart(cartItem));
 	};
 
 	const clearItemHandler = () => {
-		dispatch(removeProductFromCart(cartItems, cartItem));
+		dispatch(removeProductFromCart(cartItem));
 	};
 
 	return (
