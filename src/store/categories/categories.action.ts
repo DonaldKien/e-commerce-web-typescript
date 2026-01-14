@@ -24,7 +24,7 @@ export const fetchCategoriesAsync = () => {
 			const response = (await getCategoriesAndDocuments()) as CategoriesDocumentData;
 			dispatch(fetchCategoriesSuccess(response));
 		} catch (error) {
-			fetchCategoriesFailed(error);
+			dispatch(fetchCategoriesFailed(error));
 		}
 	};
 };
